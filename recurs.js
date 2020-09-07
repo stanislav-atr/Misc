@@ -1,27 +1,6 @@
 // Turn script timout off
 // Mozilla: about:config, dom.max_script_run_time = 0
 
-//
-/*
-(function printWindowProperties() {
-  try {
-      let iframe = document.createElement('iframe');
-      document.body.appendChild(iframe);
-
-      let standardWindow = iframe.contentWindow;
-      for (let key in window) {
-          if (typeof standardWindow[key] !== 'undefined') {
-              // Ignore, this is a standard property
-          } else {
-              console.log(key);
-          }
-      }
-  } catch (ex) {
-      document.body.removeChild(iframe);
-  }
-})();
-*/
-
 // Get list of non-standart objects
 var notDefaultArray = findCustomProperties();
 
@@ -51,14 +30,14 @@ function findCustomProperties() {
 var testObject = {
   keyStr: "string",
   keyNum: 34,
+  keyNaN: NaN,
   keyBool: true,
-  keyObj: {},
+  keyObj: {type: "hi"},
   keyArray: [],
   keySymbol: Symbol('wtf'),
   keyFunc: function() {let hi = "hi"},
   keyNull: null, // Add 
-  keyNaN: Nan, // these
-  keyUndef: undefined // types
+  keyUndef: undefined
 }
 var testArr = ["testObject"];
 
@@ -70,30 +49,36 @@ function scanObject(target, path, info) {
   console.log(path)
   // We loop through an object
 	for (const [key, value] of Object.entries(target)) {
-    // We check keys 
+    // We check keys of an object
     if (key.includes(info)) {
       console.log(`Found "${info}" in a key of ${path}`);
     }
-    // We check for each possible
+
+    // We check for each possible type of value
     switch (typeof value) {
       case 'object':
         if (Array.isArray(value)) {
-          console.log(`Value is an ARRAY at ${path}.${key}!`);
+          //console.log(`Value is an ARRAY at ${path}.${key}!`);
           break;
         }
-        console.log(`Value is an OBJECT at ${path}.${key}!`);
+        //console.log(`Value is an OBJECT at ${path}.${key}!`);
         break;
       case 'function': {
-        console.log(`Value is a FUNCTION at ${path}.${key}!`);
+        //console.log(`Value is a FUNCTION at ${path}.${key}!`);
+        break;
+      }
+      case 'undefined': {
+        //console.log(`Value is UNDEFINED at ${path}.${key}!`);
+        break;
       }
       case 'string':
-      	console.log(`Value is a STRING at ${path}.${key}!`);
+      	//console.log(`Value is a STRING at ${path}.${key}!`);
         break;
       case 'number':
-        console.log(`Value is a NUMBER at ${path}.${key}!`);
+        console.log(`Value is a NUMBER or NaN!! at ${path}.${key}!`);
         break;
       case 'boolean':
-        console.log(`Value is a BOOLEAN at ${path}.${key}!`);
+        //console.log(`Value is a BOOLEAN at ${path}.${key}!`);
         break;
       default:
         console.log(`What the fuck is that value? ${typeof value} at ${path}.${key}`);
