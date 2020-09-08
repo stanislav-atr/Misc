@@ -29,11 +29,26 @@ function findCustomProperties() {
 var testObject = {
   //keyStr: "findSomething Here Please",
   //keyNum: 34,
-  //keyObj: {type: "hi"},
-  //keyArray: [],
-  keyFunc: function () {
-    let hi = "hi";
-  },
+  // keyObj: {
+  //   type: {
+  //     fuckYou: function () {
+  //       let yanex = "jopa";
+  //     },
+  //   },
+  // },
+  keyArray: [
+    "string of array meow",
+    true,
+    undefined,
+    1324,
+    {
+      anotherObjKey: "hallo",
+    },
+    ["heey"],
+  ],
+  // keyFunc: function () {
+  //   let hi = "hi";
+  // },
   //keyBool: true,
   //keyNaN: NaN,
   //keySymbol: Symbol('wtf'),
@@ -43,11 +58,11 @@ var testObject = {
 var testArr = ["testObject"];
 
 testArr.forEach((customProp) => {
-  scanObject(window[customProp], `${customProp}`, "34");
+  scanObject(window[customProp], `${customProp}`, "eey");
 });
 
 function scanObject(target, path, info) {
-  console.log(`Path is: ${path}`);
+  //console.log(`Path is: ${path}`);
   // We loop through an object
   for (const [key, value] of Object.entries(target)) {
     // We check keys of an object
@@ -59,18 +74,20 @@ function scanObject(target, path, info) {
     switch (typeof value) {
       case "object":
         if (Array.isArray(value)) {
-          console.log(`Value is an ARRAY at ${path}.${key}!`);
+          scanObject(value, path.concat(`.${key}`), info);
           break;
         }
         // Diff null from object Object here
         if (value) {
-          console.log(`Value is an OBJECT at ${path}.${key}!`);
+          scanObject(value, path.concat(`.${key}`), info);
           break;
         }
         console.log(`drop|null`);
         break;
       case "function": {
-        console.log(`Value is a FUNCTION at ${path}.${key}!`);
+        if (value.toString().includes(info)) {
+          console.log(`Found "${info}" inside a function at ${path}.${key}!`);
+        }
         break;
       }
       case "string":
