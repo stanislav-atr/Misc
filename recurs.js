@@ -20,16 +20,10 @@ function findCustomProperties() {
   return customProps;
 }
 
+// Refactor case "function" being case-insensitive
+// Join scan and customProps;
+// do i need  dom.max_script_run_time ?
 var testObject = {
-  //keyStr: "findSomething Here Please",
-  //keyNum: 34,
-  // keyObj: {
-  //   type: {
-  //     fuckYou: function () {
-  //       let yanex = "jopa";
-  //     },
-  //   },
-  // },
   keyArray: [
     "string of array meow",
     true,
@@ -39,20 +33,16 @@ var testObject = {
       anotherObjKey: "hallo",
     },
     ["heey"],
+    function () {
+      let omg;
+    },
   ],
-  // keyFunc: function () {
-  //   let hi = "hi";
-  // },
-  //keyBool: true,
-  //keyNaN: NaN,
-  //keySymbol: Symbol('wtf'),
-  //keyNull: null,
-  //keyUndef: undefined
 };
+
 var testArr = ["testObject"];
 
 testArr.forEach((customProp) => {
-  scanObject(window[customProp], `${customProp}`, "eey");
+  scanObject(window[customProp], `${customProp}`, "OMG");
 });
 
 function scanObject(target, path, info) {
@@ -79,7 +69,7 @@ function scanObject(target, path, info) {
         console.log(`drop|null`);
         break;
       case "function": {
-        if (value.toString().includes(info)) {
+        if (value.toString().toLowerCase().includes(info.toLowerCase())) {
           console.log(`Found "${info}" inside a function at ${path}.${key}!`);
         }
         break;
