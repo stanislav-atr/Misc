@@ -20,12 +20,6 @@ function findCustomProperties() {
   return customProps;
 }
 
-// Testing
-// 0. Paste big array instead
-// 1. Concat label and parent for next recursive calls
-// 2. Check for all cases of values: Number, String, Array of [all cases\mixed], Objects etc
-// 3. Get functions as its string repr
-
 var testObject = {
   //keyStr: "findSomething Here Please",
   //keyNum: 34,
