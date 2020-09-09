@@ -1,5 +1,23 @@
-// Turn script timout off
+// Turn script timout off????
 // Mozilla: about:config, dom.max_script_run_time = 0
+
+// var testObject = {
+//   keyArray: [
+//     "string of array meow",
+//     true,
+//     undefined,
+//     1324,
+//     {
+//       anotherObjKey: "hallo",
+//     },
+//     ["heey"],
+//     function () {
+//       let omg;
+//     },
+//   ],
+// };
+
+// var testArr = ["testObject"];
 
 // Get list of non-standart objects
 var notDefaultArray = findCustomProperties();
@@ -19,30 +37,19 @@ function findCustomProperties() {
   document.body.removeChild(iframe);
   return customProps;
 }
+// Remove root frames
+var re = /^[0-9]$/
+notDefaultArray = notDefaultArray.filter((elem) => {
+  return !elem.match(re);
+});
 
-// Refactor case "function" being case-insensitive
-// Join scan and customProps;
-// do i need  dom.max_script_run_time ?
-var testObject = {
-  keyArray: [
-    "string of array meow",
-    true,
-    undefined,
-    1324,
-    {
-      anotherObjKey: "hallo",
-    },
-    ["heey"],
-    function () {
-      let omg;
-    },
-  ],
-};
-
-var testArr = ["testObject"];
-
-testArr.forEach((customProp) => {
-  scanObject(window[customProp], `${customProp}`, "OMG");
+console.log(notDefaultArray)
+// Recursively scan object for info
+var info = "INFO HERE";
+notDefaultArray.forEach((customProp) => {
+  // Filter false results
+  if (!window[customProp]) return;
+  scanObject(window[customProp], `${customProp}`, info);
 });
 
 function scanObject(target, path, info) {
@@ -61,15 +68,17 @@ function scanObject(target, path, info) {
           scanObject(value, path.concat(`.${key}`), info);
           break;
         }
-        // Diff null from object Object here
+        // Diff null from [object Object] here
         if (value) {
           scanObject(value, path.concat(`.${key}`), info);
           break;
         }
-        console.log(`drop|null`);
+        //console.log(`drop|null`);
         break;
       case "function": {
-        if (value.toString().toLowerCase().includes(info.toLowerCase())) {
+        let funcString = value.toString().toLowerCase();
+        let lowerinfo = info.toLowerCase();
+        if (funcString.includes(lowerinfo)) {
           console.log(`Found "${info}" inside a function at ${path}.${key}!`);
         }
         break;
@@ -83,7 +92,7 @@ function scanObject(target, path, info) {
         break;
       case "number":
         if (isNaN(value)) {
-          console.log(`drop|NaN`);
+          //console.log(`drop|NaN`);
           break;
         }
         let unifiedValue = value.toString().toLowerCase();
@@ -93,13 +102,13 @@ function scanObject(target, path, info) {
           break;
         }
       case "undefined":
-        console.log(`drop|undefined`);
+        //console.log(`drop|undefined`);
         break;
       case "boolean":
-        console.log(`drop|boolean`);
+        //console.log(`drop|boolean`);
         break;
       default:
-        console.log(`drop|BigInt,Symbol`);
+        //console.log(`drop|BigInt,Symbol`);
     }
   }
 }
