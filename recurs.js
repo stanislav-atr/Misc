@@ -1,27 +1,6 @@
-// Turn script timout off????
-// Mozilla: about:config, dom.max_script_run_time = 0
-
-// var testObject = {
-//   keyArray: [
-//     "string of array meow",
-//     true,
-//     undefined,
-//     1324,
-//     {
-//       anotherObjKey: "hallo",
-//     },
-//     ["heey"],
-//     function () {
-//       let omg;
-//     },
-//   ],
-// };
-
-// var testArr = ["testObject"];
+var info = "block";
 
 // Get list of non-standart objects
-var notDefaultArray = findCustomProperties();
-
 function findCustomProperties() {
   let customProps = [];
 
@@ -35,32 +14,39 @@ function findCustomProperties() {
     }
   }
   document.body.removeChild(iframe);
+  
+  // Remove root frames
+  let re = /^[0-9]$/
+  customProps = customProps.filter((elem) => !elem.match(re))
+  
   return customProps;
 }
-// Remove root frames
-var re = /^[0-9]$/
-notDefaultArray = notDefaultArray.filter((elem) => {
-  return !elem.match(re);
-});
+var notDefaultArray = findCustomProperties();
 
-console.log(notDefaultArray)
 // Recursively scan object for info
-var info = "INFO HERE";
 notDefaultArray.forEach((customProp) => {
   // Filter false results
   if (!window[customProp]) return;
   scanObject(window[customProp], `${customProp}`, info);
 });
 
+
+// every info to string and to lower case?
+// 
+
+
 function scanObject(target, path, info) {
   //console.log(`Path is: ${path}`);
+  let lowerInfo;
+
+  if (typeof info == "string" || typeof info == "number") lowerInfo = info.tostring().toLowerCase();
+  console.log(`LOWER INFO IS ${lowerInfo}`)
   // We loop through an object
   for (const [key, value] of Object.entries(target)) {
     // We check keys of an object
-    if (key.includes(info)) {
-      console.log(`Found "${info}" in a key of ${path}`);
+    if (key.toLowerCase().includes(lowerInfo)) {
+      console.log(`Found "${key}" as a key of ${path}`);
     }
-
     // We check for each possible type of value
     switch (typeof value) {
       case "object":
@@ -76,16 +62,16 @@ function scanObject(target, path, info) {
         //console.log(`drop|null`);
         break;
       case "function": {
-        let funcString = value.toString().toLowerCase();
-        let lowerinfo = info.toLowerCase();
+        //let funcString = value.toString().toLowerCase();
+        //let lowerinfo = info.toLowerCase();
         if (funcString.includes(lowerinfo)) {
           console.log(`Found "${info}" inside a function at ${path}.${key}!`);
         }
         break;
       }
       case "string":
-        let lowerValue = value.toLowerCase();
-        let lowerInfo = info.toLowerCase();
+        //let lowerValue = value.toLowerCase();
+        //let lowerInfo = info.toLowerCase();
         if (lowerValue.includes(lowerInfo)) {
           console.log(`Found "${info}" as a string value at ${path}.${key}!`);
         }
@@ -95,20 +81,24 @@ function scanObject(target, path, info) {
           //console.log(`drop|NaN`);
           break;
         }
-        let unifiedValue = value.toString().toLowerCase();
-        let unifiedInfo = info.toString().toLowerCase();
+        //let unifiedValue = value.toString().toLowerCase();
+        //let unifiedInfo = info.toString().toLowerCase();
         if (unifiedValue.includes(unifiedInfo)) {
           console.log(`Found "${info}" as a number value at ${path}.${key}!`);
           break;
         }
       case "undefined":
-        //console.log(`drop|undefined`);
+				if (info == "undefined") {
+          console.log(`Found an undefined value at ${path}.${key}!`);
+        }
         break;
       case "boolean":
-        //console.log(`drop|boolean`);
+				if (value == info) {
+          console.log(`Found boolean ${info} value at ${path}.${key}!`);
+        }
         break;
       default:
-        //console.log(`drop|BigInt,Symbol`);
+        break;
     }
   }
 }
