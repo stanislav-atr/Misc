@@ -1,36 +1,47 @@
-var info = "sad";
-
-// var testObject = {
-//   keykeyFunc: function() {
-//     let WTF = "sadlkfng;kdsfn;gslfdkn";
-//     console.log(WTF);
-//   }
-// }
-// testArray.forEach((customProp) => {
-//   // Filter false results
-//   if (!window[customProp]) return;
-//   scanObject(window[customProp], `${customProp}`, info);
-// });
-
-
-// Get list of non-standart objects
-var notDefaultArray = findCustomProperties();
+var info = "ads";
 
 // Recursively scan object for info
-notDefaultArray.forEach((customProp) => {
+[...findCustomProperties()].forEach((customProp) => {
   // Filter false results
   if (!window[customProp]) return;
   scanObject(window[customProp], `${customProp}`, info);
 });
 
+// Get list of non-standart objects
+function findCustomProperties() {
+  let customProps = [];
+
+  let iframe = document.createElement("iframe");
+  document.body.appendChild(iframe);
+
+  let cleanWindow = iframe.contentWindow;
+  for (let key in window) {
+    if (typeof cleanWindow[key] == "undefined") {
+      customProps.push(key);
+    }
+  }
+  document.body.removeChild(iframe);
+  
+  // Remove root frames
+  let re = /^[0-9]$/;
+  customProps = customProps.filter((elem) => !elem.match(re));
+  // Remove self to AVOID INFINITE RECURSION
+  customProps = customProps.filter((elem) => elem != "notDefaultArray");
+  
+  console.log(customProps);
+
+  return customProps;
+}
+
 
 //* В var info = "searchString" не должно быть кавычек.
+// Обработать null
 // Uncaught InternalError: too much recursion — посмотреть, на чем именно вспотыкается — завернуть в try {} catch мб
 // Результирующие локации собирать вместе?
+// Замена findCustomProperties — собрать массив с заготовками из фильтров
 // вывести под общий знаменатель value.toLowerCase() & value.toString()?????
 // разбить под билдер
 // ебануть gulp
-
 
 function scanObject(target, path, info) {
   //console.log(`Path is: ${path}`);
@@ -54,7 +65,7 @@ function scanObject(target, path, info) {
           scanObject(value, path.concat(`.${key}`), info);
           break;
         }
-        //console.log(`drop|null`);
+        //console.log(`drop|null`);????
         break;
       case "function": { // DONE
         let funcString = value.toString().toLowerCase();
@@ -91,25 +102,4 @@ function scanObject(target, path, info) {
         break;
     }
   }
-}
-
-function findCustomProperties() {
-  let customProps = [];
-
-  let iframe = document.createElement("iframe");
-  document.body.appendChild(iframe);
-
-  let cleanWindow = iframe.contentWindow;
-  for (let key in window) {
-    if (typeof cleanWindow[key] == "undefined") {
-      customProps.push(key);
-    }
-  }
-  document.body.removeChild(iframe);
-  
-  // Remove root frames
-  let re = /^[0-9]$/
-  customProps = customProps.filter((elem) => !elem.match(re))
-  
-  return customProps;
 }
