@@ -33,16 +33,6 @@ function findCustomProperties() {
   return customProps;
 }
 
-
-//* В var info = "searchString" не должно быть кавычек.
-// Обработать null
-// Uncaught InternalError: too much recursion — посмотреть, на чем именно вспотыкается — завернуть в try {} catch мб
-// Результирующие локации собирать вместе?
-// Замена findCustomProperties — собрать массив с заготовками из фильтров
-// вывести под общий знаменатель value.toLowerCase() & value.toString()?????
-// разбить под билдер
-// ебануть gulp
-
 function scanObject(target, path, info) {
   //console.log(`Path is: ${path}`);
   let lowerInfo = info.toLowerCase();
